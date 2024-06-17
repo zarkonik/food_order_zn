@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:food_order_zn/pages/cart_page.dart";
 
 class MySliverAppBar extends StatelessWidget {
   final Widget child;
@@ -14,7 +15,12 @@ class MySliverAppBar extends StatelessWidget {
       floating: false,
       pinned: true,
       actions: [
-        IconButton(onPressed: () {}, icon: const Icon(Icons.shopping_cart)),
+        IconButton(
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const CartPage()));
+            },
+            icon: const Icon(Icons.shopping_cart)),
       ],
       // ignore: deprecated_member_use
       backgroundColor: Theme.of(context).colorScheme.background,

@@ -1,4 +1,6 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:food_order_zn/models/cart_item.dart';
 
 import 'food.dart';
 
@@ -140,4 +142,65 @@ class Restaurant with ChangeNotifier {
   ];
 
   List<Food> get menu => _menu;
+  List<CartItem> get cart => _cart;
+
+  final List<CartItem> _cart = [];
+
+  void addToCart(Food food, List<Addon> selectedAddons) {
+    CartItem? cartItem = _cart.firstWhereOrNull((item) {
+      bool isSameFood = item.food == food;
+
+      bool isSameAddons =
+          ListEquality().equals(item.selectedAddons, selectedAddons);
+      return isSameAddons && isSameAddons;
+    });
+
+    if (cartItem != null) {
+      cartItem.quantity++;
+    } else {
+      _cart.add(CartItem(food: food, selectedAddons: selectedAddons));
+    }
+    notifyListeners();
+  }
+
+  void removeFromCard(CartItem cartItem) {
+    int cartIndex = _cart.indexOf(cartItem);
+
+    if (cartIndex != -1) {
+      if (_cart[cartIndex].quantity > 1) {
+        _cart[cartIndex].quantity--;
+      } else {
+        _cart.removeAt(cartIndex);
+      }
+    }
+
+    notifyListeners();
+  }
+
+  double getTotalPrice() {
+    double total = 0.0;
+
+    for (CartItem cartItem in _cart) {
+      double itemTotal = cartItem.food.price;
+
+      for (Addon addon in cartItem.selectedAddons) {
+        itemTotal += addon.price;
+      }
+      total += itemTotal * cartItem.quantity;
+    }
+    return total;
+  }
+
+  int getTotalItemCount() {
+    int totalItemCount = 0;
+    for (CartItem cartItem in _cart) {
+      totalItemCount += cartItem.quantity;
+    }
+    return totalItemCount;
+  }
+
+  void clearCart() {
+    _cart.clear();
+    notifyListeners();
+  }
 }
